@@ -1,0 +1,152 @@
+---
+import populationMain from "../assets/populationMain.json";
+import Layout from "../layouts/Layout.astro";
+
+const listePeriode = [
+  ...new Set(populationMain.map((d) => d.Période)),
+].reverse();
+const listeSexe = [...new Set(populationMain.map((d) => d.Sexe))];
+const listeAge = [...new Set(populationMain.map((d) => d.Âge))];
+---
+
+<Layout title="Population par département">
+  <h1 class="text-3xl font-bold">Population par département</h1>
+
+  <div class="mt-6 flex flex-wrap gap-5">
+    <label class="font-medium">
+      Année
+      <select id="periode" class="ml-2 rounded border border-slate-400 bg-white px-3 py-2">
+        {listePeriode.map((periode, i) => <option selected={i === 0}>{periode}</option>)}
+      </select>
+    </label>
+
+    <label class="font-medium">
+      Sexe
+      <select id="sexe" class="ml-2 rounded border border-slate-400 bg-white px-3 py-2">
+        {listeSexe.map((sexe, i) => <option selected={i === 0}>{sexe}</option>)}
+      </select>
+    </label>
+
+    <label class="font-medium">
+      Âge
+      <select id="age" class="ml-2 rounded border border-slate-400 bg-white px-3 py-2">
+        {listeAge.map((age, i) => <option value={age} selected={i === 0}>{age.trim()}</option>)}
+      </select>
+    </label>
+  </div>
+
+  <div id="plot" class="mt-8 overflow-x-auto" aria-live="polite"></div>
+</Layout>
+
+<script>
+  import * as Plot from "@observablehq/plot";
+  import populationMain from "../assets/populationMain.json";
+  import departements from "../assets/departements.geojson.json";
+
+  const elmYear = document.getElementById("periode") as HTMLSelectElement;
+  const elmSex = document.getElementById("sexe") as HTMLSelectElement;
+  const elmAge = document.getElementById("age") as HTMLSelectElement;
+  const plotContainer = document.getElementById("plot") as HTMLDivElement;
+
+  function updateSelect(select: HTMLSelectElement, values: (string | number)[]) {
+    const currentValue = select.value;
+
+    select.replaceChildren(
+      ...values.map((value) => {
+        const option = document.createElement("option");
+        option.value = String(value);
+        option.textContent = String(value).trim();
+        return option;
+      }),
+    );
+
+    if (values.map(String).includes(currentValue)) {
+      select.value = currentValue;
+    }
+  }
+
+  function updateFilters() {
+    const selectedYear = Number(elmYear.value);
+    const availableSexes = [
+      ...new Set(
+        populationMain
+          .filter((d) => d.Période === selectedYear)
+          .map((d) => d.Sexe),
+      ),
+    ];
+
+    updateSelect(elmSex, availableSexes);
+
+    const availableAges = [
+      ...new Set(
+        populationMain
+          .filter(
+            (d) =>
+              d.Période === selectedYear &&
+              d.Sexe === elmSex.value,
+          )
+          .map((d) => d.Âge),
+      ),
+    ];
+
+    updateSelect(elmAge, availableAges);
+  }
+
+  function renderPlot() {
+    const selectedYear = Number(elmYear.value);
+    const selectedSex = elmSex.value;
+    const selectedAge = elmAge.value;
+
+    const filteredPopulation = populationMain.filter(
+      (d) =>
+        d.Période === selectedYear &&
+        d.Sexe === selectedSex &&
+        d.Âge === selectedAge,
+    );
+
+    const populationByDepartment = new Map(
+      filteredPopulation.map((d) => [d.Géographie, d.Valeur]),
+    );
+
+    const plot = Plot.plot({
+      width: 900,
+      title: `Population en ${selectedYear}`,
+      subtitle: `${selectedSex} - ${selectedAge}`,
+      caption: "Population des départements de France métropolitaine.",
+      ariaLabel: `Carte de la population par département en ${selectedYear}, ${selectedSex}, ${selectedAge}`,
+      projection: {
+        type: "mercator",
+        domain: departements,
+      },
+      color: {
+        legend: true,
+        scheme: "Blues",
+        label: "Population",
+        unknown: "#e2e8f0",
+      },
+      marks: [
+        Plot.geo(departements, {
+          fill: (d) => populationByDepartment.get(d.properties.nom),
+          stroke: "white",
+          title: (d) =>
+            `${d.properties.nom}: ${populationByDepartment.get(d.properties.nom)?.toLocaleString("fr-FR") ?? "Non disponible"}`,
+        }),
+      ],
+    });
+
+    plotContainer.replaceChildren(plot);
+  }
+
+  elmYear.addEventListener("change", () => {
+    updateFilters();
+    renderPlot();
+  });
+  elmSex.addEventListener("change", () => {
+    updateFilters();
+    renderPlot();
+  });
+  elmAge.addEventListener("change", renderPlot);
+
+  updateFilters();
+  renderPlot();
+</script>
