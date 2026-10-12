@@ -1,11 +1,11 @@
 - URL site WEB :
-- URL Notebook Observable :
-- Nom :
-- Prénom :
-- Nom binome :
-- Prénom binome :
+- URL dépôt GitHub : https://github.com/rus42-hub/tp7-astro-plot
+- URL Notebook Observable : https://observablehq.com/@rus42-hub/tp-5-interagir-raconter-exporter
+- Nom : Budniak
+- Prénom : Ruslana
 
 # Remarques :
 
-Décrire ici les éléments techniques remarquables de votre site (interactions, navigation, responsive, accessibilité...).
-Idéalement avec des liens vers votre site et/ou [votre code](https://github.blog/news-insights/product-news/relative-links-in-markup-files/)
+- Carte Leaflet exécutée côté client avec les établissements.
+- Carte GéoJSON exécutée côté client avec les filtres année, sexe et âge.
+- Titres, légende, caption et aria-label pour l'accessibilité.
