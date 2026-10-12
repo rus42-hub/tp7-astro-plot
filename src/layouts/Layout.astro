@@ -1,18 +1,28 @@
 ---
 import "../styles/global.css";
+
+const { title = "TP7 - Cartographie" } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro Basics</title>
+    <title>{title}</title>
   </head>
-  <body>
-    <slot />
+  <body class="bg-slate-50 text-slate-900">
+    <header class="border-b border-slate-200 bg-white">
+      <nav class="mx-auto flex max-w-6xl gap-3 px-5 py-4" aria-label="Navigation principale">
+        <a class="rounded-lg px-4 py-2 font-medium hover:bg-slate-100" href="/">Accueil</a>
+        <a class="rounded-lg px-4 py-2 font-medium hover:bg-slate-100" href="/leaflet/">Leaflet</a>
+      </nav>
+    </header>
+    <main class="mx-auto max-w-6xl px-5 py-10">
+      <slot />
+    </main>
   </body>
 </html>
 
@@ -20,7 +30,6 @@ import "../styles/global.css";
   html,
   body {
     margin: 0;
-    width: 100%;
-    height: 100%;
+    min-height: 100%;
   }
 </style>

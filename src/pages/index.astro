@@ -1,21 +1,15 @@
 ---
-import PlotFigure from "../components/PlotFigure.astro";
 import Layout from "../layouts/Layout.astro";
-import * as Plot from "@observablehq/plot";
-import penguins from "../assets/penguins.json";
 ---
 
-<Layout>
-  <h1 class="text-2xl">Test Astro et Plot (Observablehq)</h1>
-  <PlotFigure
-    options={{
-      marks: [
-        Plot.dot(penguins, {
-          x: "culmen_length_mm",
-          y: "culmen_depth_mm",
-          stroke: "species",
-        }),
-      ],
-    }}
-  />
+<Layout title="TP7 - Cartographie">
+  <h1 class="text-3xl font-bold">TP7 - Cartographie</h1>
+  <p class="mt-3 text-slate-700">Cartes réalisées avec Leaflet et Observable Plot.</p>
+
+  <a
+    class="mt-8 inline-block rounded-lg bg-teal-700 px-5 py-3 font-medium text-white hover:bg-teal-800"
+    href="/leaflet/"
+  >
+    Carte des établissements
+  </a>
 </Layout>
