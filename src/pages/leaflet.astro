@@ -19,6 +19,15 @@ import Layout from "../layouts/Layout.astro";
 <script>
   import listeEtablissements from "../assets/listeEtablissements.json";
   import L from "leaflet";
+  import markerIcon from "leaflet/dist/images/marker-icon.png";
+  import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+  import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+  L.Icon.Default.mergeOptions({
+    iconUrl: markerIcon.src,
+    iconRetinaUrl: markerIcon2x.src,
+    shadowUrl: markerShadow.src,
+  });
 
   const map = L.map("map").setView([46.6033, 1.883], 6);
 
